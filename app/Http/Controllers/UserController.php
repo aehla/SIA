@@ -29,6 +29,7 @@
         return $this->successResponse($users);
         
     }
+    
 
     //ADD USER
 
@@ -43,4 +44,40 @@
         return $this->successResponse($user, 
 Response::HTTP_CREATED);
     }
- }
+
+    //Show ID
+    public function show($id)
+    {
+         $user = User::findOrFail($id);
+         return $this->successResponse($user);
+    }
+
+    //UPDATE USER
+     public function update(Request $request,$id)
+    {
+        $rules = [
+        'username' => 'max:20',
+        'password' => 'max:20',
+        ];
+        $this->validate($request, $rules);
+        $user = User::findOrFail($id);
+            
+        $user->fill($request->all());
+        // if no changes happen
+        if ($user->isClean()) {
+            return $this->errorResponse('At least one value must 
+change', Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        $user->save();
+        return $this->successResponse($user);
+    }
+
+    //DELETE
+
+    public function delete($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+        return $this->successResponse($user);
+    }
+}
